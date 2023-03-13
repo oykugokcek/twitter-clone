@@ -1,11 +1,16 @@
 const router = require("express").Router();
+const postModel = require("./posts-model");
+const md = require("./posts-middleware");
 
-router.get("/", (req, res, next) => {
-  res.status(200).json({ message: "list of my posts working" });
+router.get("/", async (req, res, next) => {
+  try {
+    const posts = await postModel.getPosts();
+    res.status(200).json(posts);
+  } catch (error) {}
 });
 
-router.get("/:id", (req, res, next) => {
-  res.status(200).json({ message: `${req.params.id} post geliyor` });
+router.get("/:id", md.validateUserId, (req, res, next) => {
+  res.status(200).json(res.locals.post);
 });
 
 router.post("/", (req, res, next) => {
