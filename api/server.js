@@ -1,6 +1,12 @@
 const express = require("express");
-
+const authRouter = require("./auth/auth-router");
+const postsRouter = require("./posts/posts-router");
+const usersRouter = require("./users/users-router");
 const server = express();
+
+server.use("/api/auth", authRouter);
+server.use("/api/posts", postsRouter);
+server.use("/api/users", usersRouter);
 
 server.use(express.json());
 
