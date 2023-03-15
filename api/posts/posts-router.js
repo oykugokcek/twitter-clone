@@ -1,20 +1,32 @@
 const router = require("express").Router();
 const postModel = require("./posts-model");
 const md = require("./posts-middleware");
+const authMD = require("../auth/auth-middleware");
+
+router.get("/all", async (req, res, next) => {
+  const allData = await postModel.userPostData();
+  res.json(allData);
+});
 
 router.get("/", async (req, res, next) => {
   try {
     const posts = await postModel.getPosts();
     res.status(200).json(posts);
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.get("/:id", md.validateUserId, (req, res, next) => {
-  res.status(200).json(res.locals.post);
+router.get("/:id", md.validateUserId, async (req, res, next) => {
+  res.status(200).json(res.post);
 });
 
-router.post("/", (req, res, next) => {
-  res.status(200).json({ message: "new post post working" });
+router.post("/", authMD.restricted, async (req, res, next) => {
+  try {
+    console.log(req.headers.user_id);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.put("/:id", (req, res, next) => {

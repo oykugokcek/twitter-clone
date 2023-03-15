@@ -26,6 +26,7 @@ exports.up = function (knex) {
     .createTable("posts", (posts) => {
       posts.increments("post_id");
       posts.integer("view_count").unsigned().defaultTo(0);
+      posts.string("content", 256).notNullable();
       posts
         .integer("user_id")
         .unsigned()
@@ -37,7 +38,7 @@ exports.up = function (knex) {
     })
     .createTable("comments", (comments) => {
       comments.increments("comment_id");
-      comments.string("content", 256).notNullable();
+      comments.string("commentContent", 256).notNullable();
       comments
         .integer("post_id")
         .unsigned()
@@ -66,7 +67,7 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  knex.schema
+  return knex.schema
     .dropTableIfExists("likes")
     .dropTableIfExists("comments")
     .dropTableIfExists("posts")

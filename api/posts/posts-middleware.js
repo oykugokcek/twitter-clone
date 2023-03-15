@@ -6,11 +6,11 @@ async function validateUserId(req, res, next) {
     if (!existPost) {
       res.status(404).json({ message: "NOT FOUND" });
     } else {
-      res.locals.post = existPost;
+      res.post = existPost;
       next();
     }
   } catch (error) {
-    res.status(500).json({ message: "Hata oluştu, AYRICA BURAYI DÜZELT" });
+    next(error);
   }
 }
 
