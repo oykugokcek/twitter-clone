@@ -5,12 +5,14 @@ const mw = require("./users-middleware");
 router.get("/", async (req, res, next) => {
   const users = await userModel.getUsers();
   res.status(200).json(users);
+  next();
 });
 
 router.delete("/:id", mw.validateUserId, async (req, res, next) => {
   try {
     await userModel.remove(req.params.id);
     res.status(200).json({ message: "users deleted" });
+    next();
   } catch (error) {
     next(error);
   }
@@ -28,6 +30,7 @@ router.put("/:id", mw.validateUserId, async (req, res, next) => {
     // let user = await userModel.getUsersById(req.params.id);
     console.log(user);
     res.status(200).json(user);
+    next();
   } catch (error) {
     next(error);
   }

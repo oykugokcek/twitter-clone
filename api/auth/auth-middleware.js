@@ -19,8 +19,15 @@ const restricted = (req, res, next) => {
   }
 };
 
-const protected = (req, res, next) => {
-  next();
+//GENERATETOKENDA USER_ID GÖNDERİYORUM AMA GERİ ALAMIYORUM
+const checkRole = (role) => (req, res, next) => {
+  //currying
+  console.log(req.userInfo);
+  if (req.userInfo && req.userInfo.role_name === role) {
+    next();
+  } else {
+    next({ status: 403, message: "Yetkiniz yok" });
+  }
 };
 
 const validateName = (req, res, next) => {
@@ -120,7 +127,7 @@ const validateUsernameExistence = async (req, res, next) => {
 
 module.exports = {
   restricted,
-  protected,
+  checkRole,
   validateUsernameExistence,
   validateEmail,
   validateName,

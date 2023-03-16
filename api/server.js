@@ -8,9 +8,10 @@ const md = require("./auth/auth-middleware");
 server.use(express.json());
 
 server.use("/api/auth", authRouter);
-server.use("/api/posts", md.restricted, postsRouter);
-server.use("/api/users", md.restricted, usersRouter);
+server.use("/api/posts", postsRouter);
+server.use("/api/users", md.checkRole("admin"), usersRouter);
 
+//
 // server.use("*", (req, res) => {
 //   res.status(400).json({ message: `Not found` });
 // });

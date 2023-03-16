@@ -12,6 +12,7 @@ router.get("/", async (req, res, next) => {
   try {
     const posts = await postModel.getPosts();
     res.status(200).json(posts);
+    next();
   } catch (error) {
     next(error);
   }
@@ -19,6 +20,7 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:id", md.validateUserId, async (req, res, next) => {
   res.status(200).json(res.post);
+  next();
 });
 
 //json post dönmüyor
@@ -33,6 +35,7 @@ router.post("/", async (req, res, next) => {
     let insertedPost = await postModel.insert(post);
     console.log(insertedPost);
     res.status(200).json(insertedPost);
+    next();
   } catch (error) {
     next(error);
   }
@@ -54,6 +57,7 @@ router.delete("/:id", async (req, res, next) => {
   try {
     await postModel.deleteById(req.params.id);
     res.status(200).json({ message: "Post silindi" });
+    next();
   } catch (error) {
     next(error);
   }

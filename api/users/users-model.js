@@ -10,7 +10,7 @@ function getUsers() {
 async function getUsersBy(filter) {
   let User = await db("users as u")
     .join("roles as r", "u.role_id", "r.role_id")
-    .select("u.user_id", "u.username", "r.role_name")
+    .select("u.user_id", "u.username", "r.role_name", "u.password")
     .where(filter)
     .first();
   return User;
@@ -24,11 +24,11 @@ async function getUsersById(id) {
     .first();
   return Users;
 }
-
+//GERİ DÖNMÜYOR -- ID nin string olması normal mi??
 async function updateById(change, id) {
   let updatedUserId = await db("users").where("user_id", id).update(change);
   console.log(updatedUserId);
-  return getUsersById(Number(updatedUserId));
+  return await getUsersById(updatedUserId);
 }
 
 async function remove(id) {
@@ -57,7 +57,7 @@ async function addUser(user) {
   // });
   // return getUsersBy(created_user_id);
   let insertedId = await db("users").insert(user);
-  return deneme({ user_id: insertedId });
+  return await getUsersById({ user_id: insertedId[0] });
 }
 module.exports = {
   getUsers,
