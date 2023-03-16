@@ -1,8 +1,8 @@
-const userModel = require("./user-model");
+const userModel = require("./users-model");
 
 async function validateUserId(req, res, next) {
   try {
-    let existUser = await userModel.getUsersBy(req.params.id);
+    let existUser = await userModel.getUsersById(req.params.id);
     if (!existUser) {
       res.status(404).json({ message: "NOT FOUND" });
     } else {

@@ -36,16 +36,40 @@ async function getPostsByUserId(user_id) {
 
   return post;
 }
+async function getPostsByPostId(post_id) {
+  const post = await db("users as u")
+    .join("posts as p", "u.user_id", "p.user_id")
+    .join("comments as c", "p.post_id", "c.post_id")
+    .join("likes as l", "l.post_id", "p.post_id")
+    .select(
+      "u.username",
+      "p.content",
+      "c.commentContent",
+      "l.like_count",
+      "p.view_count"
+    )
+    .where({ "p.post_id": post_id });
 
-function getBy(filter) {
-  return db("posts").where(filter).first();
+  return post;
 }
+
 async function insert(post) {
-  let newPostID = await db("posts").insert(post);
-  return getBy(newPostID);
+  // await db("posts").insert(post);
+  let newPostUserID = await db("posts").insert(post);
+  return getPostsByUserId(newPostUserID);
 }
 
-module.exports = { getPosts, getPostsByUserId, insert };
+async function updateById(post, post_id) {
+  let updatedId = await db("posts").where("post_id", post_id).update(post);
+
+  return getPostsByPostId(updatedId);
+}
+
+const deleteById = (id) => {
+  return db("posts").where("post_id", id).delete();
+};
+
+module.exports = { getPosts, getPostsByUserId, insert, deleteById, updateById };
 
 // const getComments = async function (post_id) {
 //   const comments = await db("comments as c")

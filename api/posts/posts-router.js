@@ -3,10 +3,10 @@ const postModel = require("./posts-model");
 const md = require("./posts-middleware");
 const authMD = require("../auth/auth-middleware");
 
-router.get("/all", async (req, res, next) => {
-  const allData = await postModel.userPostData();
-  res.json(allData);
-});
+// router.get("/all", async (req, res, next) => {
+//   const allData = await postModel.userPostData();
+//   res.json(allData);
+// });
 
 router.get("/", async (req, res, next) => {
   try {
@@ -21,20 +21,42 @@ router.get("/:id", md.validateUserId, async (req, res, next) => {
   res.status(200).json(res.post);
 });
 
-router.post("/", authMD.restricted, async (req, res, next) => {
+//json post dönmüyor
+router.post("/", async (req, res, next) => {
+  console.log(req.userInfo.subject);
+  const post = {
+    user_id: req.userInfo.subject,
+    content: req.body.content,
+  };
+  console.log(post.content);
   try {
-    console.log(req.headers.user_id);
+    let insertedPost = await postModel.insert(post);
+    console.log(insertedPost);
+    res.status(200).json(insertedPost);
   } catch (error) {
     next(error);
   }
 });
 
-router.put("/:id", (req, res, next) => {
-  res.status(200).json({ message: `${req.params.id} post update working` });
+router.put("/:id", async (req, res, next) => {
+  try {
+    let post = await postModel.updateById(
+      { content: req.body.content },
+      req.params.id
+    );
+    res.status(200).json(post);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.delete("/:id", (req, res, next) => {
-  res.status(200).json({ message: `${req.params.id} post delete working` });
+router.delete("/:id", async (req, res, next) => {
+  try {
+    await postModel.deleteById(req.params.id);
+    res.status(200).json({ message: "Post silindi" });
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;

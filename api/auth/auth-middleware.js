@@ -17,22 +17,6 @@ const restricted = (req, res, next) => {
   } else {
     next({ status: 401, message: "Token gereklidir" });
   }
-
-  /*
-    Eğer Authorization header'ında bir token sağlanmamışsa:
-    status: 401
-    {
-      "message": "Token gereklidir"
-    }
-
-    Eğer token doğrulanamıyorsa:
-    status: 401
-    {
-      "message": "Token gecersizdir"
-    }
-
-    Alt akıştaki middlewarelar için hayatı kolaylaştırmak için kodu çözülmüş tokeni req nesnesine koyun!
-  */
 };
 
 const protected = (req, res, next) => {
@@ -77,10 +61,15 @@ const validatePassword = (req, res, next) => {
   }
 };
 
+const deneme = (req, res, next) => {
+  console.log("buradyaım.");
+  next();
+};
+
 const validateUsernameUnique = async (req, res, next) => {
   try {
     let existUser = await userModel.getUsersBy({ username: req.body.username });
-    if (existUser.length > 0) {
+    if (existUser) {
       next({ status: 401, message: "Başka bir kullanıcı adı giriniz" });
     } else {
       next();
@@ -100,9 +89,9 @@ const validateEmail = async (req, res, next) => {
 };
 
 const validateRole = async (req, res, next) => {
-  const { role_name } = req.body;
-  if (!role_name || role_name.trim() === "") {
-    req.body.role_name = "unverified_user";
+  const { role_id } = req.body;
+  if (!role_id) {
+    req.body.role_id = 3;
     next();
   } else {
     if (role_name.trim() === "admin") {
@@ -119,10 +108,10 @@ const validateRole = async (req, res, next) => {
 const validateUsernameExistence = async (req, res, next) => {
   try {
     let existUser = await userModel.getUsersBy({ username: req.body.username });
-    if (existUser.length > 0) {
+    if (existUser) {
       next();
     } else {
-      next({ status: 401, message: "Kullanıcı bilgileri yanlış." });
+      next({ status: 401, message: "Kullanıcı bilgileri yanlış!!" });
     }
   } catch (error) {
     next(error);
@@ -138,4 +127,5 @@ module.exports = {
   validatePassword,
   validateUsernameUnique,
   validateRole,
+  deneme,
 };
